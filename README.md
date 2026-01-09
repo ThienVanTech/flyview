@@ -7,6 +7,30 @@ https://flyview.dnhen.com/
 
 ![image](https://user-images.githubusercontent.com/69449713/213912227-a1af0387-b492-4768-a3d6-1c34636b32b2.png)
 
+## 📖 Installation & Setup
+
+For detailed installation instructions, please refer to:
+
+- **🇻🇳 Vietnamese Guide**: [HUONG_DAN_CAI_DAT.md](./HUONG_DAN_CAI_DAT.md) - Hướng dẫn cài đặt bằng tiếng Việt
+- **🇬🇧 English Guide**: [INSTALLATION.md](./INSTALLATION.md) - Installation guide in English
+
+Quick start:
+```bash
+# Clone the repository
+git clone https://github.com/ThienVanTech/flyview.git
+cd flyview
+
+# Install dependencies
+npm install
+
+# Setup environment variables (see .env.example)
+cp .env.example .env.local
+# Edit .env.local with your Firebase credentials
+
+# Run development server
+npm run dev
+```
+
 ## How to setup an airline?
 1. Visit https://flyview.dnhen.com/ and you will be directed to the login page. Your login is your airline.
 ![image](https://user-images.githubusercontent.com/69449713/213912212-627e7a23-7de2-4c0b-8f6f-c56d3f5945dc.png)
