@@ -6,9 +6,8 @@ export const getCurrentDayDateRange = () => {
   const pastMidnight = new Date();
   pastMidnight.setHours(0, 0, 0, 0); // Get the first midnight in the past (start of current day)
   
-  const nextMidnight = new Date();
-  nextMidnight.setDate(nextMidnight.getDate() + 1);
-  nextMidnight.setHours(0, 0, 0, 0); // Get the first midnight in the future (start of next day)
+  // Calculate next midnight by adding 24 hours to avoid issues with month/year boundaries
+  const nextMidnight = new Date(pastMidnight.getTime() + 24 * 60 * 60 * 1000);
 
   return { pastMidnight, nextMidnight };
 };

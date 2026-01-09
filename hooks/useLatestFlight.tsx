@@ -4,6 +4,12 @@ import { getCurrentDayDateRange } from '@/utils/dateUtils';
 import { collection, limit, onSnapshot, orderBy, query, where } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 
+/**
+ * Hook to fetch the latest flight by creation timestamp for a given airline code.
+ * Note: This hook requires that all flight documents have a 'created' field (set via serverTimestamp()).
+ * @param airlineCode The airline code to filter flights
+ * @returns Object containing the latest flight document or null if none found
+ */
 export const useLatestFlight = (airlineCode: string = '') => {
   const [latestFlight, setLatestFlight] = useState<IFirestoreFlightDocument | null>(null);
 

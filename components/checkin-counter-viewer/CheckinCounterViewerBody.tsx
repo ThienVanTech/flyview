@@ -40,7 +40,7 @@ export const CheckinCounterViewerBody = ({ flight }: CheckinCounterViewerBodyPro
 
   const departureTimeDate = flight.data.actualDepartureTime.toDate();
   const boardingTimeDate = flight.data.actualBoardingTime.toDate();
-  const remarkUpper = flight.data.remark.toUpperCase();
+  const remarkUpper = (flight.data.remark ?? '').toUpperCase();
 
   const animationPicker = (remark: string) => {
     switch (remark) {
