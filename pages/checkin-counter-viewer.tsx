@@ -32,7 +32,7 @@ const CheckinCounterViewer = () => {
             <FormLabel>Airline Code</FormLabel>
             <Input isRequired={true} placeholder="ABC123DEF456" onChange={(e) => setInputAirlineCode(e.target.value)} />
           </FormControl>
-          <Button mt="4" colorScheme="jet" onClick={() => router.push('/checkin-counter-viewer?ac=' + inputAirlineCode)}>
+          <Button mt="4" colorScheme="jet" onClick={() => inputAirlineCode && router.push('/checkin-counter-viewer?ac=' + inputAirlineCode)} isDisabled={!inputAirlineCode}>
             View
           </Button>
         </StandardPage>

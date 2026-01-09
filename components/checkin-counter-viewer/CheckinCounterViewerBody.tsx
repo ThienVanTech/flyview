@@ -1,4 +1,4 @@
-import { IFirestoreFlightDocument } from '@/hooks/useLatestFlight';
+import { IFirestoreFlightDocument } from '@/types/flight';
 import { Box, Flex, keyframes, Text, VStack } from '@chakra-ui/react';
 
 interface CheckinCounterViewerBodyProps {
@@ -13,6 +13,17 @@ export const CheckinCounterViewerBody = ({ flight }: CheckinCounterViewerBodyPro
       <Box h="calc(100vh - 120px)" display="flex" alignItems="center" justifyContent="center" bg="gray.900">
         <Text textStyle="viewerHeaderTitle" color="white">
           No flight available
+        </Text>
+      </Box>
+    );
+  }
+
+  // Add null checks for date fields
+  if (!flight.data.actualDepartureTime || !flight.data.actualBoardingTime) {
+    return (
+      <Box h="calc(100vh - 120px)" display="flex" alignItems="center" justifyContent="center" bg="gray.900">
+        <Text textStyle="viewerHeaderTitle" color="white">
+          Invalid flight data
         </Text>
       </Box>
     );

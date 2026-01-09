@@ -1,15 +1,14 @@
 import { db } from '@/firebaseConfig';
-import { addDoc, collection, deleteDoc, DocumentData, DocumentReference, onSnapshot, orderBy, query, serverTimestamp, updateDoc, where } from 'firebase/firestore';
+import { IFirestoreFlightDocument } from '@/types/flight';
+import { getCurrentDayDateRange } from '@/utils/dateUtils';
+import { addDoc, collection, deleteDoc, DocumentReference, onSnapshot, orderBy, query, serverTimestamp, updateDoc, where } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 
 export const useFlights = (airlineCode: string = '') => {
   const [flights, setFlights] = useState<IFirestoreFlightDocument[]>([]);
 
   useEffect(() => {
-    const pastMidnight = new Date();
-    pastMidnight.setHours(0, 0, 0, 0); // Get the first midnight in the past (start of current day)
-    const nextMidnight = new Date();
-    nextMidnight.setHours(24, 0, 0, 0); // Get the first midnight in the future (end of current day)
+    const { pastMidnight, nextMidnight } = getCurrentDayDateRange();
 
     const flightsRef = collection(db, 'flights');
     const q = query(flightsRef, where('airlineCode', '==', airlineCode), where('actualDepartureTime', '>', pastMidnight), where('actualDepartureTime', '<', nextMidnight), orderBy('actualDepartureTime'), orderBy('scheduledDepartureTime'));
@@ -80,7 +79,5 @@ export const useFlights = (airlineCode: string = '') => {
   };
 };
 
-export interface IFirestoreFlightDocument {
-  ref: DocumentReference;
-  data: DocumentData;
-}
+// Re-export the shared type for backward compatibility
+export type { IFirestoreFlightDocument } from '@/types/flight';

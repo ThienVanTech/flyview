@@ -1,5 +1,7 @@
 import { db } from '@/firebaseConfig';
-import { collection, DocumentData, DocumentReference, limit, onSnapshot, orderBy, query, where } from 'firebase/firestore';
+import { IFirestoreFlightDocument } from '@/types/flight';
+import { getCurrentDayDateRange } from '@/utils/dateUtils';
+import { collection, limit, onSnapshot, orderBy, query, where } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 
 export const useLatestFlight = (airlineCode: string = '') => {
@@ -8,13 +10,10 @@ export const useLatestFlight = (airlineCode: string = '') => {
   useEffect(() => {
     if (!airlineCode) {
       setLatestFlight(null);
-      return;
+      return () => {}; // Return empty cleanup function
     }
 
-    const pastMidnight = new Date();
-    pastMidnight.setHours(0, 0, 0, 0); // Get the first midnight in the past (start of current day)
-    const nextMidnight = new Date();
-    nextMidnight.setHours(24, 0, 0, 0); // Get the first midnight in the future (end of current day)
+    const { pastMidnight, nextMidnight } = getCurrentDayDateRange();
 
     const flightsRef = collection(db, 'flights');
     const q = query(
@@ -45,8 +44,3 @@ export const useLatestFlight = (airlineCode: string = '') => {
     latestFlight
   };
 };
-
-export interface IFirestoreFlightDocument {
-  ref: DocumentReference;
-  data: DocumentData;
-}
