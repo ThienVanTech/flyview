@@ -135,6 +135,34 @@ service cloud.firestore {
 }
 ```
 
+#### Composite Indexes (REQUIRED)
+
+**Important**: The application requires composite indexes to load flight lists. When you first access the Edit or Viewer pages, Firebase will show an error in the browser console with a link to create the required index.
+
+**How to Create Composite Indexes:**
+
+**Option 1: Automatic (Recommended)**
+1. Open browser console (F12) while running the app
+2. Navigate to the Edit or Viewer page
+3. Look for an error like: "The query requires an index..."
+4. Click the link in the error - Firebase will auto-create the index for you
+5. Wait a few minutes for the index to build
+6. Refresh the page
+
+**Option 2: Manual Creation**
+1. Go to Firebase Console > **Firestore Database > Indexes**
+2. Click "Create Index"
+3. Create an index with the following configuration:
+
+**Index 1 (Required for viewing flights):**
+- Collection ID: `flights`
+- Fields to index:
+  - `airlineCode` - Ascending
+  - `actualDepartureTime` - Ascending
+  - `scheduledDepartureTime` - Ascending
+
+**Note**: After creating the index, it may take 5-10 minutes for Firebase to complete building it. During this time, the Edit and Viewer pages will not display data yet.
+
 ### 3.4. Setup Firebase Authentication
 
 1. In Firebase Console, go to **Authentication**
@@ -225,6 +253,19 @@ FlyView uses Firebase as the backend without a separate REST API. All database i
    ```
 
 ## Troubleshooting
+
+### Edit/Viewer Pages Don't Load Data (Blank Screen)
+**Cause**: Missing Composite Index in Firestore
+
+**Solution**:
+1. Open Browser Console (F12)
+2. Look for an error like: `The query requires an index. You can create it here: https://console.firebase.google.com/...`
+3. Click the link in the error message
+4. Firebase will auto-fill the index creation form - click "Create Index"
+5. Wait 5-10 minutes for the index to build
+6. Refresh the page
+
+**Details**: See the "Composite Indexes (REQUIRED)" section in 3.3 above.
 
 ### "Firebase: Error (auth/...)" Error
 - Double-check environment variables in `.env.local`

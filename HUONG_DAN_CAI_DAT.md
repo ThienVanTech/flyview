@@ -135,6 +135,34 @@ service cloud.firestore {
 }
 ```
 
+#### Composite Indexes (BẮT BUỘC)
+
+**Quan trọng**: Ứng dụng cần composite indexes để load danh sách chuyến bay. Khi bạn lần đầu truy cập trang Edit hoặc Viewer, Firebase sẽ báo lỗi trong browser console và cung cấp link để tạo index.
+
+**Cách tạo Composite Indexes:**
+
+**Option 1: Tự động (Khuyến nghị)**
+1. Mở browser console (F12) khi chạy ứng dụng
+2. Truy cập trang Edit hoặc Viewer
+3. Tìm lỗi có dạng: "The query requires an index..."
+4. Click vào link trong lỗi - Firebase sẽ tự động tạo index cho bạn
+5. Đợi vài phút để index được tạo xong
+6. Refresh lại trang
+
+**Option 2: Tạo thủ công**
+1. Vào Firebase Console > **Firestore Database > Indexes**
+2. Click "Create Index"
+3. Tạo index với cấu hình sau:
+
+**Index 1 (Required for viewing flights):**
+- Collection ID: `flights`
+- Fields to index:
+  - `airlineCode` - Ascending
+  - `actualDepartureTime` - Ascending
+  - `scheduledDepartureTime` - Ascending
+
+**Lưu ý**: Sau khi tạo index, có thể mất 5-10 phút để Firebase hoàn thành việc build index. Trong thời gian này, trang Edit và Viewer vẫn chưa hiển thị được dữ liệu.
+
 ### 3.4. Cấu Hình Firebase Authentication
 
 1. Trong Firebase Console, vào phần **Authentication**
@@ -225,6 +253,19 @@ FlyView sử dụng Firebase làm backend, không có REST API riêng. Tất c�
    ```
 
 ## Troubleshooting
+
+### Trang Edit/Viewer không load được dữ liệu (chỉ thấy màn hình trắng)
+**Nguyên nhân**: Thiếu Composite Index trong Firestore
+
+**Giải pháp**:
+1. Mở Browser Console (F12)
+2. Tìm lỗi có dạng: `The query requires an index. You can create it here: https://console.firebase.google.com/...`
+3. Click vào link trong thông báo lỗi
+4. Firebase sẽ tự động điền form tạo index - click "Create Index"
+5. Đợi 5-10 phút để index được build
+6. Refresh lại trang
+
+**Chi tiết**: Xem phần "Composite Indexes (BẮT BUỘC)" trong mục 3.3 ở trên.
 
 ### Lỗi "Firebase: Error (auth/...)"
 - Kiểm tra lại các biến môi trường trong `.env.local`
