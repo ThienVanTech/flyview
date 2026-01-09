@@ -38,8 +38,23 @@ export const CheckinCounterViewerBody = ({ flight }: CheckinCounterViewerBodyPro
     );
   }
 
-  const departureTimeDate = flight.data.actualDepartureTime.toDate();
-  const boardingTimeDate = flight.data.actualBoardingTime.toDate();
+  // Defensive type checking: ensure these are Firestore Timestamp objects
+  let departureTimeDate: Date;
+  let boardingTimeDate: Date;
+  
+  try {
+    departureTimeDate = flight.data.actualDepartureTime.toDate ? flight.data.actualDepartureTime.toDate() : new Date(flight.data.actualDepartureTime);
+    boardingTimeDate = flight.data.actualBoardingTime.toDate ? flight.data.actualBoardingTime.toDate() : new Date(flight.data.actualBoardingTime);
+  } catch (error) {
+    return (
+      <Box h="calc(100vh - 120px)" display="flex" alignItems="center" justifyContent="center" bg="gray.900">
+        <Text textStyle="viewerHeaderTitle" color="white">
+          Invalid date format
+        </Text>
+      </Box>
+    );
+  }
+  
   const remarkUpper = (flight.data.remark ?? '').toUpperCase();
 
   const animationPicker = (remark: string) => {

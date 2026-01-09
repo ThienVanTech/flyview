@@ -6,7 +6,14 @@ import { useEffect, useState } from 'react';
 
 /**
  * Hook to fetch the latest flight by creation timestamp for a given airline code.
- * Note: This hook requires that all flight documents have a 'created' field (set via serverTimestamp()).
+ * 
+ * Note: This hook requires:
+ * 1. All flight documents to have a 'created' field (set via serverTimestamp())
+ * 2. A Firestore composite index with fields:
+ *    - airlineCode (ascending)
+ *    - actualDepartureTime (ascending)
+ *    - created (descending)
+ * 
  * @param airlineCode The airline code to filter flights
  * @returns Object containing the latest flight document or null if none found
  */
