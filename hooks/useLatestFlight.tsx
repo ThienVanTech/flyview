@@ -10,7 +10,7 @@ export const useLatestFlight = (airlineCode: string = '') => {
   useEffect(() => {
     if (!airlineCode) {
       setLatestFlight(null);
-      return () => {}; // Return empty cleanup function
+      return;
     }
 
     const { pastMidnight, nextMidnight } = getCurrentDayDateRange();

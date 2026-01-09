@@ -1,5 +1,6 @@
 import { IFirestoreFlightDocument } from '@/hooks/useFlights';
 import { MINUTES_AFTER_DEP_TO_DISPLAY, viewerWidths } from '@/pages/viewer';
+import { formatTime } from '@/utils/dateUtils';
 import { Box, Flex, keyframes, Text } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 
@@ -51,10 +52,10 @@ export const ViewerBody = ({ flights }: ViewerBodyProps) => {
               {flight.data.destination}
             </Text>
             <Text textStyle="viewerBody" color="white" w={viewerWidths.sched / 100}>
-              {`${('0' + departureTimeDate.getHours()).slice(-2)}:${('0' + departureTimeDate.getMinutes()).slice(-2)}`}
+              {formatTime(departureTimeDate)}
             </Text>
             <Text textStyle="viewerBody" color="white" w={viewerWidths.board / 100}>
-              {`${('0' + boardingTimeDate.getHours()).slice(-2)}:${('0' + boardingTimeDate.getMinutes()).slice(-2)}`}
+              {formatTime(boardingTimeDate)}
             </Text>
             <Text textStyle="viewerBody" color="white" w={viewerWidths.gate / 100}>
               {flight.data.gate}

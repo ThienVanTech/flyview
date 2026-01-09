@@ -1,5 +1,14 @@
 import { IFirestoreFlightDocument } from '@/types/flight';
+import { formatTime } from '@/utils/dateUtils';
 import { Box, Flex, keyframes, Text, VStack } from '@chakra-ui/react';
+
+const blink = keyframes`
+  0% { opacity: 0.0; }
+  25% { opacity: 1.0; }
+  50% { opacity: 1.0; }
+  75% { opacity: 1.0; }
+  100% { opacity: 0.0; }
+`;
 
 interface CheckinCounterViewerBodyProps {
   flight: IFirestoreFlightDocument | null;
@@ -31,6 +40,7 @@ export const CheckinCounterViewerBody = ({ flight }: CheckinCounterViewerBodyPro
 
   const departureTimeDate = flight.data.actualDepartureTime.toDate();
   const boardingTimeDate = flight.data.actualBoardingTime.toDate();
+  const remarkUpper = flight.data.remark.toUpperCase();
 
   const animationPicker = (remark: string) => {
     switch (remark) {
@@ -73,7 +83,7 @@ export const CheckinCounterViewerBody = ({ flight }: CheckinCounterViewerBodyPro
               Scheduled Departure
             </Text>
             <Text fontSize={{ base: '3xl', md: '4xl', lg: '6xl' }} fontWeight="bold" color="white">
-              {`${('0' + departureTimeDate.getHours()).slice(-2)}:${('0' + departureTimeDate.getMinutes()).slice(-2)}`}
+              {formatTime(departureTimeDate)}
             </Text>
           </Flex>
 
@@ -83,7 +93,7 @@ export const CheckinCounterViewerBody = ({ flight }: CheckinCounterViewerBodyPro
               Boarding Time
             </Text>
             <Text fontSize={{ base: '3xl', md: '4xl', lg: '6xl' }} fontWeight="bold" color="white">
-              {`${('0' + boardingTimeDate.getHours()).slice(-2)}:${('0' + boardingTimeDate.getMinutes()).slice(-2)}`}
+              {formatTime(boardingTimeDate)}
             </Text>
           </Flex>
 
@@ -104,8 +114,8 @@ export const CheckinCounterViewerBody = ({ flight }: CheckinCounterViewerBodyPro
             <Text textStyle="viewerHeader" color="gray.400" mb="2">
               Status
             </Text>
-            <Text fontSize={{ base: '2xl', md: '4xl', lg: '5xl' }} fontWeight="bold" color="yellow.300" animation={animationPicker(flight.data.remark.toUpperCase())}>
-              {flight.data.remark.toUpperCase()}
+            <Text fontSize={{ base: '2xl', md: '4xl', lg: '5xl' }} fontWeight="bold" color="yellow.300" animation={animationPicker(remarkUpper)}>
+              {remarkUpper}
             </Text>
           </Flex>
         )}
@@ -113,11 +123,3 @@ export const CheckinCounterViewerBody = ({ flight }: CheckinCounterViewerBodyPro
     </Box>
   );
 };
-
-const blink = keyframes`
-  0% { opacity: 0.0; }
-  25% { opacity: 1.0; }
-  50% { opacity: 1.0; }
-  75% { opacity: 1.0; }
-  100% { opacity: 0.0; }
-`;

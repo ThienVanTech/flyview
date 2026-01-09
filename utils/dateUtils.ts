@@ -7,7 +7,17 @@ export const getCurrentDayDateRange = () => {
   pastMidnight.setHours(0, 0, 0, 0); // Get the first midnight in the past (start of current day)
   
   const nextMidnight = new Date();
-  nextMidnight.setHours(24, 0, 0, 0); // Get the first midnight in the future (end of current day)
+  nextMidnight.setDate(nextMidnight.getDate() + 1);
+  nextMidnight.setHours(0, 0, 0, 0); // Get the first midnight in the future (start of next day)
 
   return { pastMidnight, nextMidnight };
+};
+
+/**
+ * Format time from a Date object to HH:MM format
+ * @param date The date object to format
+ * @returns Formatted time string (e.g., "14:30")
+ */
+export const formatTime = (date: Date): string => {
+  return `${('0' + date.getHours()).slice(-2)}:${('0' + date.getMinutes()).slice(-2)}`;
 };
