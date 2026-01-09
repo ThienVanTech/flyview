@@ -73,6 +73,13 @@ NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
 - File `.env.local` sẽ không được commit vào Git (đã được thêm vào `.gitignore`)
 - Tham khảo file `.env.example` để biết cấu trúc chính xác
 
+**⚠️ CẢNH BÁO BẢO MẬT**: 
+Các giá trị cấu hình Firebase này là client-side keys và sẽ được hiển thị trong trình duyệt. Mặc dù đây là điều bình thường với Firebase web apps, bạn BẮT BUỘC phải:
+- Cấu hình Firestore Security Rules phù hợp (xem phần 3.3)
+- Kích hoạt Firebase Authentication (xem phần 3.4)
+- Không bao giờ để lộ các cài đặt nhạy cảm hoặc thông tin admin
+- Thường xuyên kiểm tra lại security rules và access logs của Firebase
+
 ### 3.3. Cấu Hình Firebase Database (Firestore)
 
 1. Trong Firebase Console, vào phần **Firestore Database**

@@ -73,6 +73,13 @@ NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
 - The `.env.local` file is not committed to Git (already in `.gitignore`)
 - Refer to `.env.example` for the correct structure
 
+**⚠️ SECURITY WARNING**: 
+These Firebase configuration values are client-side keys that will be exposed in the browser. While this is normal for Firebase web apps, you MUST:
+- Configure proper Firestore Security Rules (see section 3.3)
+- Enable Firebase Authentication (see section 3.4)
+- Never expose sensitive project settings or admin credentials
+- Regularly review your Firebase security rules and access logs
+
 ### 3.3. Setup Firebase Database (Firestore)
 
 1. In Firebase Console, go to **Firestore Database**
