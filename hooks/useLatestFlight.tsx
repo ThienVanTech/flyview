@@ -38,7 +38,7 @@ export const useLatestFlight = (airlineCode: string = '') => {
       where('actualDepartureTime', '>', pastMidnight),
       where('actualDepartureTime', '<', nextMidnight),
       orderBy('actualDepartureTime', 'asc'),
-      orderBy('created', 'desc'),
+      orderBy('scheduledDepartureTime', 'asc'),
       limit(1)
     );
 
