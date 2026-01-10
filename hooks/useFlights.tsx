@@ -67,6 +67,7 @@ export const useFlights = (airlineCode: string = '') => {
       gate,
       bell,
       remark: '',
+      arrivalRemark: '',
       created: serverTimestamp()
     });
   };

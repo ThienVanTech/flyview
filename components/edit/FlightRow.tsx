@@ -12,6 +12,7 @@ interface FlightRowProps {
 export const FlightRow = ({ flight, isEditable }: FlightRowProps) => {
   const { updateFlight, deleteFlight } = useFlights();
   const { isOpen: isCustomRemarkOpen, onOpen: onCustomRemarkOpen, onClose: onCustomRemarkClose } = useDisclosure();
+  const { isOpen: isCustomArrivalRemarkOpen, onOpen: onCustomArrivalRemarkOpen, onClose: onCustomArrivalRemarkClose } = useDisclosure();
 
   const timezoneOffset = new Date().getTimezoneOffset() * 60000;
   const departureTimeDate = flight.data.actualDepartureTime.toDate();
@@ -27,6 +28,17 @@ export const FlightRow = ({ flight, isEditable }: FlightRowProps) => {
       // Update to the new value (not custom)
       onCustomRemarkClose();
       updateFlight(flightRef, { remark: newValue });
+    }
+  };
+
+  const handleArrivalRemarkChange = (flightRef: DocumentReference<DocumentData>, newValue: string) => {
+    if (newValue === 'custom') {
+      // Show the custom input field
+      onCustomArrivalRemarkOpen();
+    } else {
+      // Update to the new value (not custom)
+      onCustomArrivalRemarkClose();
+      updateFlight(flightRef, { arrivalRemark: newValue });
     }
   };
 
@@ -128,6 +140,21 @@ export const FlightRow = ({ flight, isEditable }: FlightRowProps) => {
         </Select>
         <Collapse in={isCustomRemarkOpen} animateOpacity>
           <Editable isDisabled={!isEditable} placeholder="empty" defaultValue={flight.data.remark} onSubmit={(newValue) => updateFlight(flight.ref, { remark: newValue })}>
+            <EditablePreview />
+            <EditableInput />
+          </Editable>
+        </Collapse>
+      </Td>
+      <Td>
+        <Select minW="150px" onChange={(e) => handleArrivalRemarkChange(flight.ref, e.target.value)} value={flight.data.arrivalRemark || ''}>
+          <option value="">empty</option>
+          <option value="Arrived">Arrived</option>
+          <option value="Delayed">Delayed</option>
+          <option value="All bag on bell">All bag on bell</option>
+          <option value="custom">custom</option>
+        </Select>
+        <Collapse in={isCustomArrivalRemarkOpen} animateOpacity>
+          <Editable isDisabled={!isEditable} placeholder="empty" defaultValue={flight.data.arrivalRemark || ''} onSubmit={(newValue) => updateFlight(flight.ref, { arrivalRemark: newValue })}>
             <EditablePreview />
             <EditableInput />
           </Editable>

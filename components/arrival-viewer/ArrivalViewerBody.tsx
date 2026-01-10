@@ -31,8 +31,8 @@ export const ArrivalViewerBody = ({ arrivals }: ArrivalViewerBodyProps) => {
 
   const animationPicker = (remark: string) => {
     switch (remark) {
-      case 'LANDED':
-      case 'ARRIVING':
+      case 'ARRIVED':
+      case 'DELAYED':
         return blinkAnimation;
       default:
         return '';
@@ -69,8 +69,8 @@ export const ArrivalViewerBody = ({ arrivals }: ArrivalViewerBodyProps) => {
             <Text textStyle="viewerBody" color="white" w={viewerWidths.gate / 100}>
               {flight.data.bell || 'N/A'}
             </Text>
-            <Text textStyle="viewerBody" color="yellow.300" w={viewerWidths.remark / 100} animation={animationPicker(flight.data.remark.toUpperCase())}>
-              {flight.data.remark.toUpperCase()}
+            <Text textStyle="viewerBody" color="yellow.300" w={viewerWidths.remark / 100} animation={animationPicker((flight.data.arrivalRemark || '').toUpperCase())}>
+              {(flight.data.arrivalRemark || '').toUpperCase()}
             </Text>
           </Flex>
         );
