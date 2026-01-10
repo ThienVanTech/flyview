@@ -14,6 +14,9 @@ import { useEffect, useState } from 'react';
  *    - actualDepartureTime (ascending)
  *    - created (descending)
  * 
+ * The query orders by actualDepartureTime first (required by Firestore when using
+ * inequality filters), then by created DESC to get the most recently created flight.
+ * 
  * @param airlineCode The airline code to filter flights
  * @returns Object containing the latest flight document or null if none found
  */
@@ -34,6 +37,7 @@ export const useLatestFlight = (airlineCode: string = '') => {
       where('airlineCode', '==', airlineCode),
       where('actualDepartureTime', '>', pastMidnight),
       where('actualDepartureTime', '<', nextMidnight),
+      orderBy('actualDepartureTime', 'asc'),
       orderBy('created', 'desc'),
       limit(1)
     );
