@@ -1,33 +1,37 @@
 import { Clock } from '@/components/Clock';
 import { viewerWidths } from '@/pages/viewer';
-import { Flex, Heading, HStack, Image, Text } from '@chakra-ui/react';
+import { Box, Flex, Image, Text } from '@chakra-ui/react';
 
-export const BaggageViewerHeader = () => {
+interface BaggageViewerHeaderProps {
+  airlineName: string | undefined;
+  logo: string | undefined;
+  headerColor: string | undefined;
+  textColor: string | undefined;
+}
+
+export const BaggageViewerHeader = ({ airlineName, logo, headerColor, textColor }: BaggageViewerHeaderProps) => {
   return (
-    <Flex direction="column" w="full">
-      <HStack w="full" h="72px" px="8" py="8" bg="blue.600">
-        <Image src="/logo.png" w="72px" h="72px" />
-        <Heading size="3xl" color="white">
-          FlyView
-        </Heading>
-      </HStack>
-      <Flex alignItems="center" gap={{ base: '2', sm: '4', md: '6', lg: '8' }} w="full" h="72px" px="8" bg="blue.600">
-        <Heading size="md" color="white" w={viewerWidths.flight / 100}>
-          Flight
-        </Heading>
-        <Heading size="md" color="white" w={viewerWidths.destination / 100}>
-          Origin
-        </Heading>
-        <Heading size="md" color="white" w={viewerWidths.remark / 100}>
-          Status
-        </Heading>
-        <Clock />
-      </Flex>
-      <Flex alignItems="center" gap={{ base: '2', sm: '4', md: '6', lg: '8' }} w="full" h="72px" px="8" bg="blue.600">
-        <Heading size="2xl" color="white" w="full" textAlign="center">
+    <Box w="full" bg={headerColor} px="8">
+      <Flex justifyContent="space-between" alignItems="center" gap="8" w="full">
+        <Box w="20%">
+          <Image alt={airlineName} src={logo} h={{ base: '12px', sm: '14px', md: '24px', lg: '40px', xl: '60px' }} />
+        </Box>
+        <Text textStyle="viewerHeaderTitle" color={textColor} lineHeight="1" w="60%" textAlign="center">
           Baggage Claim Information
-        </Heading>
+        </Text>
+        <Clock textColor={textColor} textStyle="viewerHeader" />
       </Flex>
-    </Flex>
+      <Flex gap={{ base: '2', sm: '4', md: '6', lg: '8' }} w="full" bg={headerColor}>
+        <Text textStyle="viewerHeader" color={textColor} w={viewerWidths.flight / 100}>
+          Flight
+        </Text>
+        <Text textStyle="viewerHeader" color={textColor} w={viewerWidths.destination / 100}>
+          Origin
+        </Text>
+        <Text textStyle="viewerHeader" color={textColor} w={viewerWidths.remark / 100}>
+          Status
+        </Text>
+      </Flex>
+    </Box>
   );
 };
