@@ -68,6 +68,7 @@ export const useFlights = (airlineCode: string = '') => {
       bell,
       remark: '',
       arrivalRemark: '',
+      baggageRemark: '',
       created: serverTimestamp()
     });
   };

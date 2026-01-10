@@ -35,6 +35,9 @@ export const Navbar = () => {
         <Button variant="solid" onClick={() => window.open('/boarding-viewer?ac=' + airlineCode)}>
           Boarding
         </Button>
+        <Button variant="solid" onClick={() => window.open('/baggage-viewer?ac=' + airlineCode)}>
+          Baggage Claim
+        </Button>
         <Button colorScheme="jet" onClick={logout}>
           Logout
         </Button>

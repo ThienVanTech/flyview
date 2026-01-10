@@ -13,6 +13,7 @@ export const FlightRow = ({ flight, isEditable }: FlightRowProps) => {
   const { updateFlight, deleteFlight } = useFlights();
   const { isOpen: isCustomRemarkOpen, onOpen: onCustomRemarkOpen, onClose: onCustomRemarkClose } = useDisclosure();
   const { isOpen: isCustomArrivalRemarkOpen, onOpen: onCustomArrivalRemarkOpen, onClose: onCustomArrivalRemarkClose } = useDisclosure();
+  const { isOpen: isCustomBaggageRemarkOpen, onOpen: onCustomBaggageRemarkOpen, onClose: onCustomBaggageRemarkClose } = useDisclosure();
 
   const timezoneOffset = new Date().getTimezoneOffset() * 60000;
   const departureTimeDate = flight.data.actualDepartureTime.toDate();
@@ -39,6 +40,17 @@ export const FlightRow = ({ flight, isEditable }: FlightRowProps) => {
       // Update to the new value (not custom)
       onCustomArrivalRemarkClose();
       updateFlight(flightRef, { arrivalRemark: newValue });
+    }
+  };
+
+  const handleBaggageRemarkChange = (flightRef: DocumentReference<DocumentData>, newValue: string) => {
+    if (newValue === 'custom') {
+      // Show the custom input field
+      onCustomBaggageRemarkOpen();
+    } else {
+      // Update to the new value (not custom)
+      onCustomBaggageRemarkClose();
+      updateFlight(flightRef, { baggageRemark: newValue });
     }
   };
 
@@ -150,11 +162,24 @@ export const FlightRow = ({ flight, isEditable }: FlightRowProps) => {
           <option value="">empty</option>
           <option value="Arrived">Arrived</option>
           <option value="Delayed">Delayed</option>
-          <option value="All bag on bell">All bag on bell</option>
           <option value="custom">custom</option>
         </Select>
         <Collapse in={isCustomArrivalRemarkOpen} animateOpacity>
           <Editable isDisabled={!isEditable} placeholder="empty" defaultValue={flight.data.arrivalRemark || ''} onSubmit={(newValue) => updateFlight(flight.ref, { arrivalRemark: newValue })}>
+            <EditablePreview />
+            <EditableInput />
+          </Editable>
+        </Collapse>
+      </Td>
+      <Td>
+        <Select minW="150px" onChange={(e) => handleBaggageRemarkChange(flight.ref, e.target.value)} value={flight.data.baggageRemark || ''}>
+          <option value="">empty</option>
+          <option value="All bag on bell">All bag on bell</option>
+          <option value="Bag delivery expected in 10 mins">Bag delivery expected in 10 mins</option>
+          <option value="custom">custom</option>
+        </Select>
+        <Collapse in={isCustomBaggageRemarkOpen} animateOpacity>
+          <Editable isDisabled={!isEditable} placeholder="empty" defaultValue={flight.data.baggageRemark || ''} onSubmit={(newValue) => updateFlight(flight.ref, { baggageRemark: newValue })}>
             <EditablePreview />
             <EditableInput />
           </Editable>
