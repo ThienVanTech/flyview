@@ -10,11 +10,11 @@ const blink = keyframes`
   100% { opacity: 0.0; }
 `;
 
-interface CheckinCounterViewerBodyProps {
+interface BoardingViewerBodyProps {
   flight: IFirestoreFlightDocument | null;
 }
 
-export const CheckinCounterViewerBody = ({ flight }: CheckinCounterViewerBodyProps) => {
+export const BoardingViewerBody = ({ flight }: BoardingViewerBodyProps) => {
   const blinkAnimation = `${blink} 3s infinite`;
 
   if (!flight) {
@@ -28,7 +28,7 @@ export const CheckinCounterViewerBody = ({ flight }: CheckinCounterViewerBodyPro
   }
 
   // Add null checks for date fields
-  if (!flight.data.scheduledDepartureTime) {
+  if (!flight.data.scheduledBoardingTime) {
     return (
       <Box h="calc(100vh - 120px)" display="flex" alignItems="center" justifyContent="center" bg="gray.900">
         <Text textStyle="viewerHeaderTitle" color="white">
@@ -39,10 +39,10 @@ export const CheckinCounterViewerBody = ({ flight }: CheckinCounterViewerBodyPro
   }
 
   // Defensive type checking: ensure these are Firestore Timestamp objects
-  let departureTimeDate: Date;
+  let boardingTimeDate: Date;
   
   try {
-    departureTimeDate = flight.data.scheduledDepartureTime.toDate ? flight.data.scheduledDepartureTime.toDate() : new Date(flight.data.scheduledDepartureTime);
+    boardingTimeDate = flight.data.scheduledBoardingTime.toDate ? flight.data.scheduledBoardingTime.toDate() : new Date(flight.data.scheduledBoardingTime);
   } catch (error) {
     return (
       <Box h="calc(100vh - 120px)" display="flex" alignItems="center" justifyContent="center" bg="gray.900">
@@ -78,24 +78,37 @@ export const CheckinCounterViewerBody = ({ flight }: CheckinCounterViewerBodyPro
           </Text>
         </Flex>
 
-        {/* Destination */}
+        {/* Origin - Destination */}
         <Flex direction="column" alignItems="center" w="full">
           <Text textStyle="viewerHeader" color="gray.400" mb="2">
-            Destination
+            Route
           </Text>
           <Text fontSize={{ base: '3xl', md: '5xl', lg: '7xl' }} fontWeight="bold" color="white">
-            {flight.data.destination}
+            {flight.data.origin} - {flight.data.destination}
           </Text>
         </Flex>
 
-        {/* Departure Time */}
-        <Flex direction="column" alignItems="center" w="full">
-          <Text textStyle="viewerHeader" color="gray.400" mb="2">
-            Scheduled Departure
-          </Text>
-          <Text fontSize={{ base: '3xl', md: '4xl', lg: '6xl' }} fontWeight="bold" color="white">
-            {formatTime(departureTimeDate)}
-          </Text>
+        {/* Boarding Time and Gate */}
+        <Flex direction={{ base: 'column', lg: 'row' }} gap={{ base: '8', lg: '16' }} w="full" justifyContent="center">
+          {/* Boarding Time */}
+          <Flex direction="column" alignItems="center">
+            <Text textStyle="viewerHeader" color="gray.400" mb="2">
+              Boarding Time
+            </Text>
+            <Text fontSize={{ base: '3xl', md: '4xl', lg: '6xl' }} fontWeight="bold" color="white">
+              {formatTime(boardingTimeDate)}
+            </Text>
+          </Flex>
+
+          {/* Gate */}
+          <Flex direction="column" alignItems="center">
+            <Text textStyle="viewerHeader" color="gray.400" mb="2">
+              Gate
+            </Text>
+            <Text fontSize={{ base: '3xl', md: '4xl', lg: '6xl' }} fontWeight="bold" color="white">
+              {flight.data.gate}
+            </Text>
+          </Flex>
         </Flex>
 
         {/* Remark */}

@@ -32,6 +32,9 @@ export const Navbar = () => {
         <Button variant="solid" onClick={() => window.open('/checkin-counter-viewer?ac=' + airlineCode)}>
           Check-in Counter
         </Button>
+        <Button variant="solid" onClick={() => window.open('/boarding-viewer?ac=' + airlineCode)}>
+          Boarding
+        </Button>
         <Button colorScheme="jet" onClick={logout}>
           Logout
         </Button>
