@@ -42,17 +42,24 @@ export const useLatestFlight = (airlineCode: string = '') => {
       limit(1)
     );
 
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      if (snapshot.docs.length > 0) {
-        const doc = snapshot.docs[0];
-        setLatestFlight({
-          ref: doc.ref,
-          data: doc.data()
-        });
-      } else {
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        if (snapshot.docs.length > 0) {
+          const doc = snapshot.docs[0];
+          setLatestFlight({
+            ref: doc.ref,
+            data: doc.data()
+          });
+        } else {
+          setLatestFlight(null);
+        }
+      },
+      (error) => {
+        console.error('Error fetching latest flight:', error);
         setLatestFlight(null);
       }
-    });
+    );
 
     return () => unsubscribe();
   }, [airlineCode]);

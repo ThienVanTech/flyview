@@ -32,14 +32,21 @@ export const useArrivals = (airlineCode: string = '') => {
       orderBy('scheduledDepartureTime')
     );
 
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      setArrivals(
-        snapshot.docs.map((doc) => ({
-          ref: doc.ref,
-          data: doc.data()
-        }))
-      );
-    });
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        setArrivals(
+          snapshot.docs.map((doc) => ({
+            ref: doc.ref,
+            data: doc.data()
+          }))
+        );
+      },
+      (error) => {
+        console.error('Error fetching arrivals:', error);
+        setArrivals([]);
+      }
+    );
 
     return () => unsubscribe();
   }, [airlineCode]);

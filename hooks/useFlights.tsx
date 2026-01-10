@@ -18,14 +18,21 @@ export const useFlights = (airlineCode: string = '') => {
     const flightsRef = collection(db, 'flights');
     const q = query(flightsRef, where('airlineCode', '==', airlineCode), where('actualDepartureTime', '>', pastMidnight), where('actualDepartureTime', '<', nextMidnight), orderBy('actualDepartureTime'), orderBy('scheduledDepartureTime'));
 
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      setFlights(
-        snapshot.docs.map((doc) => ({
-          ref: doc.ref,
-          data: doc.data()
-        }))
-      );
-    });
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        setFlights(
+          snapshot.docs.map((doc) => ({
+            ref: doc.ref,
+            data: doc.data()
+          }))
+        );
+      },
+      (error) => {
+        console.error('Error fetching flights:', error);
+        setFlights([]);
+      }
+    );
 
     return () => unsubscribe();
   }, [airlineCode]);
