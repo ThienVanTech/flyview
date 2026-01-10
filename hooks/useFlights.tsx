@@ -31,10 +31,11 @@ export const useFlights = (airlineCode: string = '') => {
    * @param {string} destination the flight's destination
    * @param {Date} scheduledDepartureTime the scheduled departure time
    * @param {Date} scheduledBoardingTime the scheduled boarding time
+   * @param {Date} scheduledArrivalTime the scheduled arrival time
    * @param {number} gate the flight's departure gate
    * @return a promise pointing to the newly created document reference
    */
-  const addFlight = (airlineCode: string, flightNumber: string, destination: string, scheduledDepartureTime: Date, scheduledBoardingTime: Date, gate: number) => {
+  const addFlight = (airlineCode: string, flightNumber: string, destination: string, scheduledDepartureTime: Date, scheduledBoardingTime: Date, scheduledArrivalTime: Date, gate: number) => {
     const flightsColRef = collection(db, 'flights');
     return addDoc(flightsColRef, {
       airlineCode,
@@ -44,6 +45,8 @@ export const useFlights = (airlineCode: string = '') => {
       actualDepartureTime: scheduledDepartureTime,
       scheduledBoardingTime,
       actualBoardingTime: scheduledBoardingTime,
+      scheduledArrivalTime,
+      actualArrivalTime: scheduledArrivalTime,
       gate,
       remark: '',
       created: serverTimestamp()

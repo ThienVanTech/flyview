@@ -47,6 +47,14 @@ export const FlightRow = ({ flight, isEditable }: FlightRowProps) => {
       <Td>
         <input
           disabled={!isEditable}
+          value={new Date(flight.data.scheduledDepartureTime.toDate() - timezoneOffset).toISOString().slice(0, 19)}
+          type="datetime-local"
+          onChange={(e) => e.target.value && updateFlight(flight.ref, { scheduledDepartureTime: new Date(e.target.value) })}
+        />
+      </Td>
+      <Td>
+        <input
+          disabled={!isEditable}
           value={new Date(flight.data.actualDepartureTime.toDate() - timezoneOffset).toISOString().slice(0, 19)}
           type="datetime-local"
           onChange={(e) => e.target.value && updateFlight(flight.ref, { actualDepartureTime: new Date(e.target.value) })}
@@ -55,9 +63,33 @@ export const FlightRow = ({ flight, isEditable }: FlightRowProps) => {
       <Td>
         <input
           disabled={!isEditable}
+          value={new Date(flight.data.scheduledBoardingTime.toDate() - timezoneOffset).toISOString().slice(0, 19)}
+          type="datetime-local"
+          onChange={(e) => e.target.value && updateFlight(flight.ref, { scheduledBoardingTime: new Date(e.target.value) })}
+        />
+      </Td>
+      <Td>
+        <input
+          disabled={!isEditable}
           value={new Date(flight.data.actualBoardingTime.toDate() - timezoneOffset).toISOString().slice(0, 19)}
           type="datetime-local"
           onChange={(e) => e.target.value && updateFlight(flight.ref, { actualBoardingTime: new Date(e.target.value) })}
+        />
+      </Td>
+      <Td>
+        <input
+          disabled={!isEditable}
+          value={flight.data.scheduledArrivalTime ? new Date(flight.data.scheduledArrivalTime.toDate() - timezoneOffset).toISOString().slice(0, 19) : ''}
+          type="datetime-local"
+          onChange={(e) => e.target.value && updateFlight(flight.ref, { scheduledArrivalTime: new Date(e.target.value) })}
+        />
+      </Td>
+      <Td>
+        <input
+          disabled={!isEditable}
+          value={flight.data.actualArrivalTime ? new Date(flight.data.actualArrivalTime.toDate() - timezoneOffset).toISOString().slice(0, 19) : ''}
+          type="datetime-local"
+          onChange={(e) => e.target.value && updateFlight(flight.ref, { actualArrivalTime: new Date(e.target.value) })}
         />
       </Td>
       <Td>

@@ -13,10 +13,11 @@ export const AddFlight = () => {
   const [destination, setDestination] = useState<string>();
   const [scheduledDepartureTime, setScheduledDepartureTime] = useState<Date>();
   const [scheduledBoardingTimePrior, setScheduledBoardingTimePrior] = useState<number>();
+  const [scheduledArrivalTime, setScheduledArrivalTime] = useState<Date>();
   const [gate, setGate] = useState<number>();
 
   const handleAddFlight = () => {
-    if (!flightPrefix || !flightNumber || !destination || !scheduledDepartureTime || !scheduledBoardingTimePrior || !gate) {
+    if (!flightPrefix || !flightNumber || !destination || !scheduledDepartureTime || !scheduledBoardingTimePrior || !scheduledArrivalTime || !gate) {
       toast({ title: 'Error adding flight.', description: 'You need to have a value in every input.', status: 'error', variant: 'left-accent', isClosable: true });
       return false;
     }
@@ -27,7 +28,7 @@ export const AddFlight = () => {
     const finalScheduledBoardingTime = new Date(scheduledDepartureTime);
     finalScheduledBoardingTime.setMinutes(scheduledDepartureTime.getMinutes() - scheduledBoardingTimePrior);
 
-    addFlight(airlineCode, finalFlightNumber, destination, scheduledDepartureTime, finalScheduledBoardingTime, gate)
+    addFlight(airlineCode, finalFlightNumber, destination, scheduledDepartureTime, finalScheduledBoardingTime, scheduledArrivalTime, gate)
       .then(() => {
         toast({ title: 'Flight added successfully.', description: 'The flight has successfully been added to the system', status: 'success', variant: 'left-accent', isClosable: true });
         return true;
@@ -72,6 +73,10 @@ export const AddFlight = () => {
           <option value="40">40 minutes before departure</option>
           <option value="45">45 minutes before departure</option>
         </Select>
+      </FormControl>
+      <FormControl>
+        <FormLabel>Scheduled Arrival Time</FormLabel>
+        <input type="datetime-local" onChange={(e) => setScheduledArrivalTime(new Date(e.target.value))} />
       </FormControl>
       <FormControl>
         <FormLabel>Gate</FormLabel>
