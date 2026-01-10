@@ -10,14 +10,16 @@ export const AddFlight = () => {
   const toast = useToast();
   const [flightPrefix, setFlightPrefix] = useState<string>();
   const [flightNumber, setFlightNumber] = useState<string>();
+  const [origin, setOrigin] = useState<string>();
   const [destination, setDestination] = useState<string>();
   const [scheduledDepartureTime, setScheduledDepartureTime] = useState<Date>();
   const [scheduledBoardingTimePrior, setScheduledBoardingTimePrior] = useState<number>();
   const [scheduledArrivalTime, setScheduledArrivalTime] = useState<Date>();
   const [gate, setGate] = useState<number>();
+  const [bell, setBell] = useState<number>();
 
   const handleAddFlight = () => {
-    if (!flightPrefix || !flightNumber || !destination || !scheduledDepartureTime || !scheduledBoardingTimePrior || !scheduledArrivalTime || !gate) {
+    if (!flightPrefix || !flightNumber || !origin || !destination || !scheduledDepartureTime || !scheduledBoardingTimePrior || !scheduledArrivalTime || !gate || !bell) {
       toast({ title: 'Error adding flight.', description: 'You need to have a value in every input.', status: 'error', variant: 'left-accent', isClosable: true });
       return false;
     }
@@ -28,7 +30,7 @@ export const AddFlight = () => {
     const finalScheduledBoardingTime = new Date(scheduledDepartureTime);
     finalScheduledBoardingTime.setMinutes(scheduledDepartureTime.getMinutes() - scheduledBoardingTimePrior);
 
-    addFlight(airlineCode, finalFlightNumber, destination, scheduledDepartureTime, finalScheduledBoardingTime, scheduledArrivalTime, gate)
+    addFlight(airlineCode, finalFlightNumber, origin, destination, scheduledDepartureTime, finalScheduledBoardingTime, scheduledArrivalTime, gate, bell)
       .then(() => {
         toast({ title: 'Flight added successfully.', description: 'The flight has successfully been added to the system', status: 'success', variant: 'left-accent', isClosable: true });
         return true;
@@ -57,6 +59,10 @@ export const AddFlight = () => {
         </HStack>
       </FormControl>
       <FormControl>
+        <FormLabel>Origin</FormLabel>
+        <Input isRequired={true} placeholder="Origin" onChange={(e) => setOrigin(e.target.value)} />
+      </FormControl>
+      <FormControl>
         <FormLabel>Destination</FormLabel>
         <Input isRequired={true} placeholder="Destination" onChange={(e) => setDestination(e.target.value)} />
       </FormControl>
@@ -82,6 +88,16 @@ export const AddFlight = () => {
         <FormLabel>Gate</FormLabel>
         <HStack>
           <PinInput onChange={(value) => setGate(parseInt(value))}>
+            <PinInputField />
+            <PinInputField />
+            <PinInputField />
+          </PinInput>
+        </HStack>
+      </FormControl>
+      <FormControl>
+        <FormLabel>Bell (Baggage Carousel)</FormLabel>
+        <HStack>
+          <PinInput onChange={(value) => setBell(parseInt(value))}>
             <PinInputField />
             <PinInputField />
             <PinInputField />

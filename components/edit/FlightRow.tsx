@@ -39,6 +39,12 @@ export const FlightRow = ({ flight, isEditable }: FlightRowProps) => {
         </Editable>
       </Td>
       <Td>
+        <Editable isDisabled={!isEditable} placeholder={flight.data.origin || 'N/A'} defaultValue={flight.data.origin || ''} onSubmit={(newValue) => updateFlight(flight.ref, { origin: newValue })}>
+          <EditablePreview />
+          <EditableInput />
+        </Editable>
+      </Td>
+      <Td>
         <Editable isDisabled={!isEditable} placeholder={flight.data.destination} defaultValue={flight.data.destination} onSubmit={(newValue) => newValue && updateFlight(flight.ref, { destination: newValue })}>
           <EditablePreview />
           <EditableInput />
@@ -95,6 +101,15 @@ export const FlightRow = ({ flight, isEditable }: FlightRowProps) => {
       <Td>
         <HStack>
           <PinInput isDisabled={!isEditable} defaultValue={flight.data.gate.toString()} onChange={(newValue) => newValue && updateFlight(flight.ref, { gate: parseInt(newValue) })}>
+            <PinInputField />
+            <PinInputField />
+            <PinInputField />
+          </PinInput>
+        </HStack>
+      </Td>
+      <Td>
+        <HStack>
+          <PinInput isDisabled={!isEditable} defaultValue={flight.data.bell ? flight.data.bell.toString() : ''} onChange={(newValue) => newValue && updateFlight(flight.ref, { bell: parseInt(newValue) })}>
             <PinInputField />
             <PinInputField />
             <PinInputField />

@@ -42,14 +42,13 @@ export const ArrivalViewerBody = ({ arrivals }: ArrivalViewerBodyProps) => {
   return (
     <Box h="calc(100vh - 144px)" overflowY="hidden">
       {arrivals.map((flight, i) => {
-        // For arrivals, we'll use the same time fields but interpret them differently
-        // In a real system, you'd have actualArrivalTime and scheduledArrivalTime fields
-        const arrivalTimeDate = flight.data.actualDepartureTime.toDate();
-        const estimatedTimeDate = flight.data.actualBoardingTime.toDate();
+        // For arrivals, show scheduledArrivalTime and actualArrivalTime
+        const scheduledArrivalTimeDate = flight.data.scheduledArrivalTime ? flight.data.scheduledArrivalTime.toDate() : flight.data.scheduledDepartureTime.toDate();
+        const actualArrivalTimeDate = flight.data.actualArrivalTime ? flight.data.actualArrivalTime.toDate() : flight.data.actualDepartureTime.toDate();
         const timeBeforeToViewFlight = new Date();
         timeBeforeToViewFlight.setMinutes(timeBeforeToViewFlight.getMinutes() - MINUTES_AFTER_DEP_TO_DISPLAY);
 
-        if (arrivalTimeDate < timeBeforeToViewFlight) {
+        if (scheduledArrivalTimeDate < timeBeforeToViewFlight) {
           return;
         }
 
@@ -59,16 +58,16 @@ export const ArrivalViewerBody = ({ arrivals }: ArrivalViewerBodyProps) => {
               {flight.data.flightNumber}
             </Text>
             <Text textStyle="viewerBody" color="white" w={viewerWidths.destination / 100}>
-              {flight.data.destination}
+              {flight.data.origin || flight.data.destination}
             </Text>
             <Text textStyle="viewerBody" color="white" w={viewerWidths.sched / 100}>
-              {formatTime(arrivalTimeDate)}
+              {formatTime(scheduledArrivalTimeDate)}
             </Text>
             <Text textStyle="viewerBody" color="white" w={viewerWidths.board / 100}>
-              {formatTime(estimatedTimeDate)}
+              {formatTime(actualArrivalTimeDate)}
             </Text>
             <Text textStyle="viewerBody" color="white" w={viewerWidths.gate / 100}>
-              {flight.data.gate}
+              {flight.data.bell || 'N/A'}
             </Text>
             <Text textStyle="viewerBody" color="yellow.300" w={viewerWidths.remark / 100} animation={animationPicker(flight.data.remark.toUpperCase())}>
               {flight.data.remark.toUpperCase()}

@@ -19,6 +19,7 @@ export const FlightTable = ({ isEditable = false }: FlightTableProps) => {
       <Thead>
         <Tr>
           <Th>Flight Number</Th>
+          <Th>Origin</Th>
           <Th>Destination</Th>
           <Th>Scheduled Departure</Th>
           <Th>Actual Departure</Th>
@@ -27,6 +28,7 @@ export const FlightTable = ({ isEditable = false }: FlightTableProps) => {
           <Th>Scheduled Arrival</Th>
           <Th>Actual Arrival</Th>
           <Th>Gate</Th>
+          <Th>Bell</Th>
           <Th>Remark</Th>
           {isEditable && <Th>Actions</Th>}
         </Tr>

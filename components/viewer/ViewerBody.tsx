@@ -34,12 +34,12 @@ export const ViewerBody = ({ flights }: ViewerBodyProps) => {
   return (
     <Box h="calc(100vh - 144px)" overflowY="hidden">
       {flights.map((flight, i) => {
-        const departureTimeDate = flight.data.actualDepartureTime.toDate();
-        const boardingTimeDate = flight.data.actualBoardingTime.toDate();
+        const scheduledDepartureTimeDate = flight.data.scheduledDepartureTime.toDate();
+        const scheduledBoardingTimeDate = flight.data.scheduledBoardingTime.toDate();
         const timeBeforeToViewFlight = new Date();
         timeBeforeToViewFlight.setMinutes(timeBeforeToViewFlight.getMinutes() - MINUTES_AFTER_DEP_TO_DISPLAY);
 
-        if (departureTimeDate < timeBeforeToViewFlight) {
+        if (scheduledDepartureTimeDate < timeBeforeToViewFlight) {
           return;
         }
 
@@ -52,10 +52,10 @@ export const ViewerBody = ({ flights }: ViewerBodyProps) => {
               {flight.data.destination}
             </Text>
             <Text textStyle="viewerBody" color="white" w={viewerWidths.sched / 100}>
-              {formatTime(departureTimeDate)}
+              {formatTime(scheduledDepartureTimeDate)}
             </Text>
             <Text textStyle="viewerBody" color="white" w={viewerWidths.board / 100}>
-              {formatTime(boardingTimeDate)}
+              {formatTime(scheduledBoardingTimeDate)}
             </Text>
             <Text textStyle="viewerBody" color="white" w={viewerWidths.gate / 100}>
               {flight.data.gate}

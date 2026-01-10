@@ -32,10 +32,10 @@ export const ArrivalViewerHeader = ({ airlineName, logo, headerColor, textColor 
           Sched
         </Text>
         <Text textStyle="viewerHeader" color={textColor} w={viewerWidths.board / 100}>
-          Estimated
+          Actual
         </Text>
         <Text textStyle="viewerHeader" color={textColor} w={viewerWidths.gate / 100}>
-          Gate
+          Bell
         </Text>
         <Text textStyle="viewerHeader" color={textColor} w={viewerWidths.remark / 100}>
           Remark
