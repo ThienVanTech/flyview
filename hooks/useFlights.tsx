@@ -8,12 +8,17 @@ export const useFlights = (airlineCode: string = '') => {
   const [flights, setFlights] = useState<IFirestoreFlightDocument[]>([]);
 
   useEffect(() => {
+    if (!airlineCode) {
+      setFlights([]);
+      return;
+    }
+
     const { pastMidnight, nextMidnight } = getCurrentDayDateRange();
 
     const flightsRef = collection(db, 'flights');
     const q = query(flightsRef, where('airlineCode', '==', airlineCode), where('actualDepartureTime', '>', pastMidnight), where('actualDepartureTime', '<', nextMidnight), orderBy('actualDepartureTime'), orderBy('scheduledDepartureTime'));
 
-    onSnapshot(q, (snapshot) => {
+    const unsubscribe = onSnapshot(q, (snapshot) => {
       setFlights(
         snapshot.docs.map((doc) => ({
           ref: doc.ref,
@@ -21,6 +26,8 @@ export const useFlights = (airlineCode: string = '') => {
         }))
       );
     });
+
+    return () => unsubscribe();
   }, [airlineCode]);
 
   /***

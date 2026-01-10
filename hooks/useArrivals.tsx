@@ -13,6 +13,11 @@ export const useArrivals = (airlineCode: string = '') => {
   const [arrivals, setArrivals] = useState<IFirestoreFlightDocument[]>([]);
 
   useEffect(() => {
+    if (!airlineCode) {
+      setArrivals([]);
+      return;
+    }
+
     const { pastMidnight, nextMidnight } = getCurrentDayDateRange();
 
     const flightsRef = collection(db, 'flights');
