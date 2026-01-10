@@ -24,7 +24,13 @@ export const Navbar = () => {
       </Flex>
       <Flex alignItems="center" gap="4">
         <Button variant="solid" onClick={() => window.open('/viewer?ac=' + airlineCode)}>
-          Viewer
+          Departures
+        </Button>
+        <Button variant="solid" onClick={() => window.open('/arrival-viewer?ac=' + airlineCode)}>
+          Arrivals
+        </Button>
+        <Button variant="solid" onClick={() => window.open('/checkin-counter-viewer?ac=' + airlineCode)}>
+          Check-in Counter
         </Button>
         <Button colorScheme="jet" onClick={logout}>
           Logout
