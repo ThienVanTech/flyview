@@ -1,6 +1,6 @@
-import { FirebaseApp, getApps, initializeApp } from 'firebase/app';
-import { Auth, getAuth } from 'firebase/auth';
-import { Firestore, getFirestore } from 'firebase/firestore';
+import { getApps, initializeApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -15,9 +15,9 @@ const firebaseConfig = {
 const isFirebaseConfigValid = !!firebaseConfig.apiKey && firebaseConfig.apiKey !== 'undefined';
 
 // Initialize Firebase only if config is valid and not already initialized
-let app: FirebaseApp | undefined;
-let auth: Auth | undefined;
-let db: Firestore | undefined;
+let app;
+let auth;
+let db;
 
 if (isFirebaseConfigValid) {
   app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
