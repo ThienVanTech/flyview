@@ -24,7 +24,7 @@ export const useLatestFlight = (airlineCode: string = '') => {
   const [latestFlight, setLatestFlight] = useState<IFirestoreFlightDocument | null>(null);
 
   useEffect(() => {
-    if (!airlineCode || !db) {
+    if (!airlineCode) {
       setLatestFlight(null);
       return;
     }
@@ -62,7 +62,7 @@ export const useLatestFlight = (airlineCode: string = '') => {
     );
 
     return () => unsubscribe();
-  }, [airlineCode, db]);
+  }, [airlineCode]);
 
   return {
     latestFlight

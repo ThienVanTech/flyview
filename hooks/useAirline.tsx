@@ -6,11 +6,11 @@ export const useAirline = (airlineCode: string = '') => {
   const [airlineData, setAirlineData] = useState<IAirlineData>();
 
   useEffect(() => {
-    if (!airlineCode || !db) return;
+    if (!airlineCode) return;
 
     const airlineDocRef = doc(db, 'airlines', airlineCode);
 
-    const unsubscribe = onSnapshot(airlineDocRef, (doc) => {
+    onSnapshot(airlineDocRef, (doc) => {
       setAirlineData({
         name: doc.data()?.name || 'Unnamed',
         logo: doc.data()?.logo || 'https://via.placeholder.com/728x143',
@@ -18,9 +18,7 @@ export const useAirline = (airlineCode: string = '') => {
         textColor: doc.data()?.textColor || '#FFFFFF'
       });
     });
-
-    return () => unsubscribe();
-  }, [airlineCode, db]);
+  }, [airlineCode]);
 
   /***
    * Update the airline in the firestore database
@@ -29,9 +27,6 @@ export const useAirline = (airlineCode: string = '') => {
    * @return a promise resolving once the data is successfully written
    */
   const updateAirline = (newValues: {}) => {
-    if (!db) {
-      return Promise.reject(new Error('Firebase Firestore is not initialized. Please check your Firebase configuration.'));
-    }
     const airlineDocRef = doc(db, 'airlines', airlineCode);
 
     return setDoc(airlineDocRef, newValues, { merge: true });
