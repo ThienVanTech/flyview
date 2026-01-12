@@ -18,6 +18,13 @@ export const useArrivals = (airlineCode: string = '') => {
       return;
     }
 
+    // Guard: if db is not initialized, we can't fetch data
+    if (!db) {
+      console.warn('Firebase db is not initialized. Cannot fetch arrivals.');
+      setArrivals([]);
+      return;
+    }
+
     const { pastMidnight, nextMidnight } = getCurrentDayDateRange();
 
     const flightsRef = collection(db, 'flights');
