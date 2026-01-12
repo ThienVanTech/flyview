@@ -49,7 +49,7 @@ export const useArrivals = (airlineCode: string = '') => {
     );
 
     return () => unsubscribe();
-  }, [airlineCode]);
+  }, [airlineCode, db]);
 
   return {
     arrivals

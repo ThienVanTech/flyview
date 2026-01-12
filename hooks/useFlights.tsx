@@ -35,7 +35,7 @@ export const useFlights = (airlineCode: string = '') => {
     );
 
     return () => unsubscribe();
-  }, [airlineCode]);
+  }, [airlineCode, db]);
 
   /***
    * Adds a flight to the firestore database

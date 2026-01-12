@@ -62,7 +62,7 @@ export const useLatestFlight = (airlineCode: string = '') => {
     );
 
     return () => unsubscribe();
-  }, [airlineCode]);
+  }, [airlineCode, db]);
 
   return {
     latestFlight

@@ -10,7 +10,7 @@ export const useAirline = (airlineCode: string = '') => {
 
     const airlineDocRef = doc(db, 'airlines', airlineCode);
 
-    onSnapshot(airlineDocRef, (doc) => {
+    const unsubscribe = onSnapshot(airlineDocRef, (doc) => {
       setAirlineData({
         name: doc.data()?.name || 'Unnamed',
         logo: doc.data()?.logo || 'https://via.placeholder.com/728x143',
@@ -18,7 +18,9 @@ export const useAirline = (airlineCode: string = '') => {
         textColor: doc.data()?.textColor || '#FFFFFF'
       });
     });
-  }, [airlineCode]);
+
+    return () => unsubscribe();
+  }, [airlineCode, db]);
 
   /***
    * Update the airline in the firestore database
