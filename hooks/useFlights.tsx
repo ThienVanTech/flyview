@@ -1,27 +1,40 @@
 import { db } from '@/firebaseConfig';
-import { addDoc, collection, deleteDoc, DocumentData, DocumentReference, onSnapshot, orderBy, query, serverTimestamp, updateDoc, where } from 'firebase/firestore';
+import { IFirestoreFlightDocument } from '@/types/flight';
+import { getCurrentDayDateRange } from '@/utils/dateUtils';
+import { addDoc, collection, deleteDoc, DocumentReference, onSnapshot, orderBy, query, serverTimestamp, updateDoc, where } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 
 export const useFlights = (airlineCode: string = '') => {
   const [flights, setFlights] = useState<IFirestoreFlightDocument[]>([]);
 
   useEffect(() => {
-    const pastMidnight = new Date();
-    pastMidnight.setHours(0, 0, 0, 0); // Get the first midnight in the past (start of current day)
-    const nextMidnight = new Date();
-    nextMidnight.setHours(24, 0, 0, 0); // Get the first midnight in the future (end of current day)
+    if (!airlineCode) {
+      setFlights([]);
+      return;
+    }
+
+    const { pastMidnight, nextMidnight } = getCurrentDayDateRange();
 
     const flightsRef = collection(db, 'flights');
     const q = query(flightsRef, where('airlineCode', '==', airlineCode), where('actualDepartureTime', '>', pastMidnight), where('actualDepartureTime', '<', nextMidnight), orderBy('actualDepartureTime'), orderBy('scheduledDepartureTime'));
 
-    onSnapshot(q, (snapshot) => {
-      setFlights(
-        snapshot.docs.map((doc) => ({
-          ref: doc.ref,
-          data: doc.data()
-        }))
-      );
-    });
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        setFlights(
+          snapshot.docs.map((doc) => ({
+            ref: doc.ref,
+            data: doc.data()
+          }))
+        );
+      },
+      (error) => {
+        console.error('Error fetching flights:', error);
+        setFlights([]);
+      }
+    );
+
+    return () => unsubscribe();
   }, [airlineCode]);
 
   /***
@@ -29,24 +42,33 @@ export const useFlights = (airlineCode: string = '') => {
    *
    * @param {string} airlineCode the airline's code
    * @param {string} flightNumber the flight number
+   * @param {string} origin the flight's origin
    * @param {string} destination the flight's destination
    * @param {Date} scheduledDepartureTime the scheduled departure time
    * @param {Date} scheduledBoardingTime the scheduled boarding time
+   * @param {Date} scheduledArrivalTime the scheduled arrival time
    * @param {number} gate the flight's departure gate
+   * @param {number} bell the baggage carousel number
    * @return a promise pointing to the newly created document reference
    */
-  const addFlight = (airlineCode: string, flightNumber: string, destination: string, scheduledDepartureTime: Date, scheduledBoardingTime: Date, gate: number) => {
+  const addFlight = (airlineCode: string, flightNumber: string, origin: string, destination: string, scheduledDepartureTime: Date, scheduledBoardingTime: Date, scheduledArrivalTime: Date, gate: number, bell: number) => {
     const flightsColRef = collection(db, 'flights');
     return addDoc(flightsColRef, {
       airlineCode,
       flightNumber,
+      origin,
       destination,
       scheduledDepartureTime,
       actualDepartureTime: scheduledDepartureTime,
       scheduledBoardingTime,
       actualBoardingTime: scheduledBoardingTime,
+      scheduledArrivalTime,
+      actualArrivalTime: scheduledArrivalTime,
       gate,
+      bell,
       remark: '',
+      arrivalRemark: '',
+      baggageRemark: '',
       created: serverTimestamp()
     });
   };
@@ -80,7 +102,5 @@ export const useFlights = (airlineCode: string = '') => {
   };
 };
 
-export interface IFirestoreFlightDocument {
-  ref: DocumentReference;
-  data: DocumentData;
-}
+// Re-export the shared type for backward compatibility
+export type { IFirestoreFlightDocument } from '@/types/flight';

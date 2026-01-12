@@ -1,14 +1,21 @@
 import { IFirestoreFlightDocument } from '@/hooks/useFlights';
 import { MINUTES_AFTER_DEP_TO_DISPLAY, viewerWidths } from '@/pages/viewer';
-import { formatTime } from '@/utils/dateUtils';
 import { Box, Flex, keyframes, Text } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 
-interface ViewerBodyProps {
-  flights: IFirestoreFlightDocument[];
+interface BaggageViewerBodyProps {
+  arrivals: IFirestoreFlightDocument[];
 }
 
-export const ViewerBody = ({ flights }: ViewerBodyProps) => {
+const blink = keyframes`
+  0% { opacity: 0.0; }
+  25% { opacity: 1.0; }
+  50% { opacity: 1.0; }
+  75% { opacity: 1.0; }
+  100% { opacity: 0.0; }
+`;
+
+export const BaggageViewerBody = ({ arrivals }: BaggageViewerBodyProps) => {
   const [ticker, setTicker] = useState<number>(0);
   const blinkAnimation = `${blink} 3s infinite`;
 
@@ -23,8 +30,8 @@ export const ViewerBody = ({ flights }: ViewerBodyProps) => {
 
   const animationPicker = (remark: string) => {
     switch (remark) {
-      case 'BOARDING':
-      case 'FINAL CALL':
+      case 'ALL BAG ON BELL':
+      case 'BAG DELIVERY EXPECTED IN 10 MINS':
         return blinkAnimation;
       default:
         return '';
@@ -32,14 +39,14 @@ export const ViewerBody = ({ flights }: ViewerBodyProps) => {
   };
 
   return (
-    <Box h="calc(100vh - 144px)" overflowY="hidden">
-      {flights.map((flight, i) => {
-        const scheduledDepartureTimeDate = flight.data.scheduledDepartureTime.toDate();
-        const scheduledBoardingTimeDate = flight.data.scheduledBoardingTime.toDate();
+    <Box h="calc(100vh - 216px)" overflowY="hidden">
+      {arrivals.map((flight, i) => {
+        // For baggage, show scheduledArrivalTime
+        const scheduledArrivalTimeDate = flight.data.scheduledArrivalTime ? flight.data.scheduledArrivalTime.toDate() : flight.data.scheduledDepartureTime.toDate();
         const timeBeforeToViewFlight = new Date();
         timeBeforeToViewFlight.setMinutes(timeBeforeToViewFlight.getMinutes() - MINUTES_AFTER_DEP_TO_DISPLAY);
 
-        if (scheduledDepartureTimeDate < timeBeforeToViewFlight) {
+        if (scheduledArrivalTimeDate < timeBeforeToViewFlight) {
           return;
         }
 
@@ -49,19 +56,10 @@ export const ViewerBody = ({ flights }: ViewerBodyProps) => {
               {flight.data.flightNumber}
             </Text>
             <Text textStyle="viewerBody" color="white" w={viewerWidths.destination / 100}>
-              {flight.data.destination}
+              {flight.data.origin || flight.data.destination}
             </Text>
-            <Text textStyle="viewerBody" color="white" w={viewerWidths.sched / 100}>
-              {formatTime(scheduledDepartureTimeDate)}
-            </Text>
-            <Text textStyle="viewerBody" color="white" w={viewerWidths.board / 100}>
-              {formatTime(scheduledBoardingTimeDate)}
-            </Text>
-            <Text textStyle="viewerBody" color="white" w={viewerWidths.gate / 100}>
-              {flight.data.gate}
-            </Text>
-            <Text textStyle="viewerBody" color="yellow.300" w={viewerWidths.remark / 100} animation={animationPicker(flight.data.remark.toUpperCase())}>
-              {flight.data.remark.toUpperCase()}
+            <Text textStyle="viewerBody" color="yellow.300" w={viewerWidths.remark / 100} animation={animationPicker((flight.data.baggageRemark || '').toUpperCase())}>
+              {(flight.data.baggageRemark || '').toUpperCase()}
             </Text>
           </Flex>
         );
@@ -93,11 +91,3 @@ export const ViewerBody = ({ flights }: ViewerBodyProps) => {
     </Box>
   );
 };
-
-const blink = keyframes`
-  0% { opacity: 0.0; }
-  25% { opacity: 1.0; }
-  50% { opacity: 1.0; }
-  75% { opacity: 1.0; }
-  100% { opacity: 0.0; }
-`;

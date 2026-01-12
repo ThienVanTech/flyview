@@ -12,6 +12,8 @@ interface FlightRowProps {
 export const FlightRow = ({ flight, isEditable }: FlightRowProps) => {
   const { updateFlight, deleteFlight } = useFlights();
   const { isOpen: isCustomRemarkOpen, onOpen: onCustomRemarkOpen, onClose: onCustomRemarkClose } = useDisclosure();
+  const { isOpen: isCustomArrivalRemarkOpen, onOpen: onCustomArrivalRemarkOpen, onClose: onCustomArrivalRemarkClose } = useDisclosure();
+  const { isOpen: isCustomBaggageRemarkOpen, onOpen: onCustomBaggageRemarkOpen, onClose: onCustomBaggageRemarkClose } = useDisclosure();
 
   const timezoneOffset = new Date().getTimezoneOffset() * 60000;
   const departureTimeDate = flight.data.actualDepartureTime.toDate();
@@ -30,10 +32,38 @@ export const FlightRow = ({ flight, isEditable }: FlightRowProps) => {
     }
   };
 
+  const handleArrivalRemarkChange = (flightRef: DocumentReference<DocumentData>, newValue: string) => {
+    if (newValue === 'custom') {
+      // Show the custom input field
+      onCustomArrivalRemarkOpen();
+    } else {
+      // Update to the new value (not custom)
+      onCustomArrivalRemarkClose();
+      updateFlight(flightRef, { arrivalRemark: newValue });
+    }
+  };
+
+  const handleBaggageRemarkChange = (flightRef: DocumentReference<DocumentData>, newValue: string) => {
+    if (newValue === 'custom') {
+      // Show the custom input field
+      onCustomBaggageRemarkOpen();
+    } else {
+      // Update to the new value (not custom)
+      onCustomBaggageRemarkClose();
+      updateFlight(flightRef, { baggageRemark: newValue });
+    }
+  };
+
   return (
     <Tr maxH="2" borderX="4px" borderColor={noLongerVisible ? 'red.600' : 'green.600'}>
       <Td>
         <Editable isDisabled={!isEditable} placeholder={flight.data.flightNumber} defaultValue={flight.data.flightNumber} onSubmit={(newValue) => newValue && updateFlight(flight.ref, { flightNumber: newValue })}>
+          <EditablePreview />
+          <EditableInput />
+        </Editable>
+      </Td>
+      <Td>
+        <Editable isDisabled={!isEditable} placeholder={flight.data.origin || 'N/A'} defaultValue={flight.data.origin || ''} onSubmit={(newValue) => updateFlight(flight.ref, { origin: newValue })}>
           <EditablePreview />
           <EditableInput />
         </Editable>
@@ -47,9 +77,25 @@ export const FlightRow = ({ flight, isEditable }: FlightRowProps) => {
       <Td>
         <input
           disabled={!isEditable}
+          value={new Date(flight.data.scheduledDepartureTime.toDate() - timezoneOffset).toISOString().slice(0, 19)}
+          type="datetime-local"
+          onChange={(e) => e.target.value && updateFlight(flight.ref, { scheduledDepartureTime: new Date(e.target.value) })}
+        />
+      </Td>
+      <Td>
+        <input
+          disabled={!isEditable}
           value={new Date(flight.data.actualDepartureTime.toDate() - timezoneOffset).toISOString().slice(0, 19)}
           type="datetime-local"
           onChange={(e) => e.target.value && updateFlight(flight.ref, { actualDepartureTime: new Date(e.target.value) })}
+        />
+      </Td>
+      <Td>
+        <input
+          disabled={!isEditable}
+          value={new Date(flight.data.scheduledBoardingTime.toDate() - timezoneOffset).toISOString().slice(0, 19)}
+          type="datetime-local"
+          onChange={(e) => e.target.value && updateFlight(flight.ref, { scheduledBoardingTime: new Date(e.target.value) })}
         />
       </Td>
       <Td>
@@ -61,8 +107,33 @@ export const FlightRow = ({ flight, isEditable }: FlightRowProps) => {
         />
       </Td>
       <Td>
+        <input
+          disabled={!isEditable}
+          value={flight.data.scheduledArrivalTime ? new Date(flight.data.scheduledArrivalTime.toDate() - timezoneOffset).toISOString().slice(0, 19) : ''}
+          type="datetime-local"
+          onChange={(e) => e.target.value && updateFlight(flight.ref, { scheduledArrivalTime: new Date(e.target.value) })}
+        />
+      </Td>
+      <Td>
+        <input
+          disabled={!isEditable}
+          value={flight.data.actualArrivalTime ? new Date(flight.data.actualArrivalTime.toDate() - timezoneOffset).toISOString().slice(0, 19) : ''}
+          type="datetime-local"
+          onChange={(e) => e.target.value && updateFlight(flight.ref, { actualArrivalTime: new Date(e.target.value) })}
+        />
+      </Td>
+      <Td>
         <HStack>
           <PinInput isDisabled={!isEditable} defaultValue={flight.data.gate.toString()} onChange={(newValue) => newValue && updateFlight(flight.ref, { gate: parseInt(newValue) })}>
+            <PinInputField />
+            <PinInputField />
+            <PinInputField />
+          </PinInput>
+        </HStack>
+      </Td>
+      <Td>
+        <HStack>
+          <PinInput isDisabled={!isEditable} defaultValue={flight.data.bell ? flight.data.bell.toString() : ''} onChange={(newValue) => newValue && updateFlight(flight.ref, { bell: parseInt(newValue) })}>
             <PinInputField />
             <PinInputField />
             <PinInputField />
@@ -81,6 +152,34 @@ export const FlightRow = ({ flight, isEditable }: FlightRowProps) => {
         </Select>
         <Collapse in={isCustomRemarkOpen} animateOpacity>
           <Editable isDisabled={!isEditable} placeholder="empty" defaultValue={flight.data.remark} onSubmit={(newValue) => updateFlight(flight.ref, { remark: newValue })}>
+            <EditablePreview />
+            <EditableInput />
+          </Editable>
+        </Collapse>
+      </Td>
+      <Td>
+        <Select minW="150px" onChange={(e) => handleArrivalRemarkChange(flight.ref, e.target.value)} value={flight.data.arrivalRemark || ''}>
+          <option value="">empty</option>
+          <option value="Arrived">Arrived</option>
+          <option value="Delayed">Delayed</option>
+          <option value="custom">custom</option>
+        </Select>
+        <Collapse in={isCustomArrivalRemarkOpen} animateOpacity>
+          <Editable isDisabled={!isEditable} placeholder="empty" defaultValue={flight.data.arrivalRemark || ''} onSubmit={(newValue) => updateFlight(flight.ref, { arrivalRemark: newValue })}>
+            <EditablePreview />
+            <EditableInput />
+          </Editable>
+        </Collapse>
+      </Td>
+      <Td>
+        <Select minW="150px" onChange={(e) => handleBaggageRemarkChange(flight.ref, e.target.value)} value={flight.data.baggageRemark || ''}>
+          <option value="">empty</option>
+          <option value="All bag on bell">All bag on bell</option>
+          <option value="Bag delivery expected in 10 mins">Bag delivery expected in 10 mins</option>
+          <option value="custom">custom</option>
+        </Select>
+        <Collapse in={isCustomBaggageRemarkOpen} animateOpacity>
+          <Editable isDisabled={!isEditable} placeholder="empty" defaultValue={flight.data.baggageRemark || ''} onSubmit={(newValue) => updateFlight(flight.ref, { baggageRemark: newValue })}>
             <EditablePreview />
             <EditableInput />
           </Editable>
