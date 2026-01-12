@@ -8,7 +8,7 @@ export const useFlights = (airlineCode: string = '') => {
   const [flights, setFlights] = useState<IFirestoreFlightDocument[]>([]);
 
   useEffect(() => {
-    if (!airlineCode) {
+    if (!airlineCode || !db) {
       setFlights([]);
       return;
     }
@@ -52,6 +52,9 @@ export const useFlights = (airlineCode: string = '') => {
    * @return a promise pointing to the newly created document reference
    */
   const addFlight = (airlineCode: string, flightNumber: string, origin: string, destination: string, scheduledDepartureTime: Date, scheduledBoardingTime: Date, scheduledArrivalTime: Date, gate: number, bell: number) => {
+    if (!db) {
+      return Promise.reject(new Error('Firebase Firestore is not initialized. Please check your Firebase configuration.'));
+    }
     const flightsColRef = collection(db, 'flights');
     return addDoc(flightsColRef, {
       airlineCode,

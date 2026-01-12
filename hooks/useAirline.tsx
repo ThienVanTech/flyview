@@ -6,7 +6,7 @@ export const useAirline = (airlineCode: string = '') => {
   const [airlineData, setAirlineData] = useState<IAirlineData>();
 
   useEffect(() => {
-    if (!airlineCode) return;
+    if (!airlineCode || !db) return;
 
     const airlineDocRef = doc(db, 'airlines', airlineCode);
 
@@ -27,6 +27,9 @@ export const useAirline = (airlineCode: string = '') => {
    * @return a promise resolving once the data is successfully written
    */
   const updateAirline = (newValues: {}) => {
+    if (!db) {
+      return Promise.reject(new Error('Firebase Firestore is not initialized. Please check your Firebase configuration.'));
+    }
     const airlineDocRef = doc(db, 'airlines', airlineCode);
 
     return setDoc(airlineDocRef, newValues, { merge: true });

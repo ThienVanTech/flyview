@@ -13,7 +13,7 @@ export const useArrivals = (airlineCode: string = '') => {
   const [arrivals, setArrivals] = useState<IFirestoreFlightDocument[]>([]);
 
   useEffect(() => {
-    if (!airlineCode) {
+    if (!airlineCode || !db) {
       setArrivals([]);
       return;
     }

@@ -1,6 +1,6 @@
-import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+import { FirebaseApp, getApps, initializeApp } from 'firebase/app';
+import { Auth, getAuth } from 'firebase/auth';
+import { Firestore, getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -11,7 +11,21 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID
 };
 
-const app = initializeApp(firebaseConfig);
+// Check if Firebase config is valid (has at least apiKey defined)
+const isFirebaseConfigValid = !!firebaseConfig.apiKey && firebaseConfig.apiKey !== 'undefined';
 
-export const auth = getAuth(app);
-export const db = getFirestore(app);
+// Initialize Firebase only if config is valid and not already initialized
+let app: FirebaseApp | undefined;
+let auth: Auth | undefined;
+let db: Firestore | undefined;
+
+if (isFirebaseConfigValid) {
+  app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+  auth = getAuth(app);
+  db = getFirestore(app);
+} else {
+  // During build without env vars, create placeholder objects to prevent errors
+  console.warn('Firebase configuration is missing or invalid. Firebase services will not be available.');
+}
+
+export { auth, db };
