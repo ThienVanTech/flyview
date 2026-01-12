@@ -8,6 +8,12 @@ export const useAirline = (airlineCode: string = '') => {
   useEffect(() => {
     if (!airlineCode) return;
 
+    // Guard: if db is not initialized, we can't fetch data
+    if (!db) {
+      console.warn('Firebase db is not initialized. Cannot fetch airline data.');
+      return;
+    }
+
     const airlineDocRef = doc(db, 'airlines', airlineCode);
 
     onSnapshot(airlineDocRef, (doc) => {

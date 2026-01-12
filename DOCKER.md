@@ -6,7 +6,27 @@ This guide provides instructions for building and running the FlyView applicatio
 
 - Docker installed (version 20.10 or higher)
 - Docker Compose installed (version 2.0 or higher)
-- Firebase configuration file (`firebaseConfig.js`)
+- Firebase configuration (environment variables)
+
+## Configuration
+
+### Environment Variables Setup
+
+**IMPORTANT**: Firebase environment variables are required at build time for Next.js to compile correctly.
+
+Create a `.env.local` file in the project root (this file is git-ignored):
+
+```env
+# Firebase Configuration
+NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_auth_domain
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_storage_bucket
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
+```
+
+Get these values from Firebase Console → Project Settings → Your apps → Web app config.
 
 ## Quick Start
 
@@ -27,13 +47,25 @@ docker-compose down
 
 The application will be available at `http://localhost:3000`
 
+**Note**: Docker Compose will automatically read variables from `.env.local` and pass them as build arguments.
+
 ### 2. Build Docker Image Manually
 
-If you prefer to build the Docker image manually:
+If you prefer to build the Docker image manually, you must pass Firebase environment variables as build arguments:
 
 ```bash
-# Build the image
-docker build -t flyview:latest .
+# Load environment variables from .env.local
+source .env.local
+
+# Build the image with build arguments
+docker build -t flyview:latest \
+  --build-arg NEXT_PUBLIC_FIREBASE_API_KEY=$NEXT_PUBLIC_FIREBASE_API_KEY \
+  --build-arg NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=$NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN \
+  --build-arg NEXT_PUBLIC_FIREBASE_PROJECT_ID=$NEXT_PUBLIC_FIREBASE_PROJECT_ID \
+  --build-arg NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=$NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET \
+  --build-arg NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=$NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID \
+  --build-arg NEXT_PUBLIC_FIREBASE_APP_ID=$NEXT_PUBLIC_FIREBASE_APP_ID \
+  .
 
 # Run the container
 docker run -d \
@@ -49,45 +81,7 @@ docker stop flyview-app
 docker rm flyview-app
 ```
 
-## Configuration
-
-### Environment Variables
-
-Before building, ensure your Firebase configuration is properly set up in `firebaseConfig.js`.
-
-For production deployments, you may want to use environment variables. Create a `.env.local` file (not committed to git):
-
-```env
-# Firebase Configuration
-NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_auth_domain
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_storage_bucket
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
-NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
-```
-
-Then modify the docker-compose.yml to include these variables:
-
-```yaml
-services:
-  flyview:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "3000:3000"
-    environment:
-      - NODE_ENV=production
-      - NEXT_PUBLIC_FIREBASE_API_KEY=${NEXT_PUBLIC_FIREBASE_API_KEY}
-      - NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=${NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN}
-      - NEXT_PUBLIC_FIREBASE_PROJECT_ID=${NEXT_PUBLIC_FIREBASE_PROJECT_ID}
-      - NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=${NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET}
-      - NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=${NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID}
-      - NEXT_PUBLIC_FIREBASE_APP_ID=${NEXT_PUBLIC_FIREBASE_APP_ID}
-    env_file:
-      - .env.local
-```
+## Advanced Configuration
 
 ### Custom Port
 

@@ -26,17 +26,29 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   // Sign in with any firebase social sign in (google, github, etc)
   const signInWithGoogle = async () => {
+    if (!auth) {
+      throw new Error('Firebase Auth is not initialized. Please check your Firebase configuration.');
+    }
     setIsAuthLoading(true);
     return await signInWithPopup(auth, new GoogleAuthProvider());
   };
 
   // Logout of firebase
   const logout = async () => {
+    if (!auth) {
+      throw new Error('Firebase Auth is not initialized. Please check your Firebase configuration.');
+    }
     setIsAuthLoading(true);
     return await signOut(auth);
   };
 
   useEffect(() => {
+    if (!auth) {
+      // If auth is not initialized, set loading to false and return early
+      setIsAuthLoading(false);
+      return;
+    }
+
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (user) {
         setIsAuthLoading(true);
